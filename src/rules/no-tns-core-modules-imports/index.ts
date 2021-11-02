@@ -35,7 +35,6 @@ export default createESLintRule<Options, MessageIds>({
     meta: {
         type: "suggestion",
         docs: {
-            category: "Best Practices",
             description: "Disallow use of tns-core-modules imports",
             recommended: "warn",
         },
@@ -67,7 +66,7 @@ export default createESLintRule<Options, MessageIds>({
                 });
             },
             ":not(:matches(ImportSpecifier, ImportNamespaceSpecifier, ExportSpecifier, FunctionDeclaration, VariableDeclarator, Property)) > Identifier": (
-                node,
+                node
             ) => {
                 identifiers.push(node);
             },
@@ -84,7 +83,8 @@ export default createESLintRule<Options, MessageIds>({
                 }
             },
             FunctionDeclaration: (node) => {
-                const params = (node?.params?.filter((param) => !!(param as any).name) || []) as Array<TSESTree.Identifier>;
+                const params = (node?.params?.filter((param) => !!(param as any).name) ||
+                    []) as Array<TSESTree.Identifier>;
                 identifiers.push(...params);
             },
             "Program:exit"() {
@@ -99,7 +99,7 @@ export default createESLintRule<Options, MessageIds>({
 
                 for (const [importNode, { source, importedSpecifiers }] of importedNodesMap) {
                     importedSpecifiers.forEach((specifier) =>
-                        importedNamesMap.set(specifier.local.name, { importNode, source, specifier }),
+                        importedNamesMap.set(specifier.local.name, { importNode, source, specifier })
                     );
                 }
 
@@ -143,7 +143,7 @@ export default createESLintRule<Options, MessageIds>({
                         addMigratedIdentifierFix(
                             id,
                             (imported.specifier as TSESTree.ImportSpecifier).imported,
-                            nodeFixes.usedIdsFixes,
+                            nodeFixes.usedIdsFixes
                         );
 
                         return;
@@ -159,9 +159,8 @@ export default createESLintRule<Options, MessageIds>({
                     } else {
                         const name = (specifier as TSESTree.ImportSpecifier).imported.name;
                         const newIdentifier = UPDATED_SPECIFIERS[name] || name;
-                        fixedValue = newModule === NESTED_MODULE_EXPORT ?
-                            newIdentifier :
-                            `${newModule}.${newIdentifier}`;
+                        fixedValue =
+                            newModule === NESTED_MODULE_EXPORT ? newIdentifier : `${newModule}.${newIdentifier}`;
                     }
 
                     const fixes = importedNodesMap.get(imported.importNode)?.usedIdsFixes || new Set();
@@ -169,7 +168,8 @@ export default createESLintRule<Options, MessageIds>({
                 });
 
                 importedNodesMap.forEach((fixesData, importNode) =>
-                    fixImportDeclaration(importNode, context, fixesData));
+                    fixImportDeclaration(importNode, context, fixesData)
+                );
             },
         };
     },
@@ -192,15 +192,8 @@ function addMigratedIdentifierFix(used: TSESTree.Identifier, imported: TSESTree.
 function fixImportDeclaration(
     importNode: TSESTree.ImportDeclaration,
     context: RuleContext<any, any>,
-    {
-        source,
-        additionalImportsFixes,
-        specifiersFixes,
-        fixedImportPath,
-        usedIdsFixes,
-    }: ImportNodeFixerInfo,
+    { source, additionalImportsFixes, specifiersFixes, fixedImportPath, usedIdsFixes }: ImportNodeFixerInfo
 ) {
-
     context.report({
         node: importNode,
         messageId: "tnsCoreModulesImportFailure",
@@ -247,8 +240,7 @@ function shouldReplaceSpecifier(id: TSESTree.ImportClause): boolean {
 function isDeprecatedPath(node: TSESTree.Literal) {
     const path = node.value;
 
-    return typeof path === "string" &&
-        DEPRECATED_PATHS.some((disallowedPath) => disallowedPath.startsWith(path));
+    return typeof path === "string" && DEPRECATED_PATHS.some((disallowedPath) => disallowedPath.startsWith(path));
 }
 
 function fixNestedModulePath(path: string) {
