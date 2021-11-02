@@ -12,7 +12,6 @@ export default createESLintRule<Options, MessageIds>({
     meta: {
         type: "suggestion",
         docs: {
-            category: "Best Practices",
             description: "Disallow duplicated imports from NativeScript packages",
             recommended: "warn",
         },

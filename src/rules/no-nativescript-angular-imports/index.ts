@@ -13,15 +13,14 @@ export default createESLintRule<Options, MessageIds>({
     meta: {
         type: "suggestion",
         docs: {
-            category: "Best Practices",
             description: "Disallow duplicated imports from NativeScript packages",
             recommended: "warn",
         },
         messages: {
-            noNativeScriptAngularImportFailure: "Imports from '{{module}}' are deprecated."
+            noNativeScriptAngularImportFailure: "Imports from '{{module}}' are deprecated.",
         },
         schema: [{}],
-        fixable: "code", 
+        fixable: "code",
     },
     defaultOptions: [],
     create(context) {
@@ -37,15 +36,15 @@ export default createESLintRule<Options, MessageIds>({
                         data: {
                             module: value,
                         },
-                        fix: fixer => {
+                        fix: (fixer) => {
                             const { raw: rawPath } = source;
                             const fixedValue = rawPath.replace(value, NEW_MODULE_PATH);
 
                             return fixer.replaceText(source, fixedValue);
-                        }
-                    })
+                        },
+                    });
                 }
-            }
-        }
-    }
+            },
+        };
+    },
 });
