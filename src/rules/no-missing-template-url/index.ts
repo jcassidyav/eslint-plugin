@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { createESLintRule } from "../utils";
 import * as fs from "fs";
 import * as path from "path";
@@ -7,17 +9,16 @@ export type Options = [];
 export type MessageIds = "noMissingTemplateUrl";
 
 export default createESLintRule<Options, MessageIds>({
-    name: "no-missing-template-url",
+    name: "avaeon/no-missing-template-url",
     meta: {
-        type: "suggestion",
+        type: "problem",
         docs: {
             description: "Ensure templateUrl points to an existing file with the correct case",
-            recommended: "error",
         },
         messages: {
             noMissingTemplateUrl: "'{{templateUrl}}' file not found/case incorrect.",
         },
-        schema: [{}],
+        schema: [],
         fixable: "code",
     },
     defaultOptions: [],
@@ -61,13 +62,13 @@ export default createESLintRule<Options, MessageIds>({
     },
 });
 
-function fileExistsWithCaseSync(filepath) {
+function fileExistsWithCaseSync(filepath: string): boolean {
     const dir = path.dirname(filepath);
     if (dir === path.dirname(dir)) {
         return true;
     }
     const filenames = fs.readdirSync(dir);
-    if (filenames.indexOf(path.basename(filepath)) === -1) {
+    if (!filenames.includes(path.basename(filepath))) {
         return false;
     }
     return fileExistsWithCaseSync(dir);
